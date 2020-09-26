@@ -25,10 +25,6 @@ terraform apply out.tfplan -auto-approve -input=false
 A comma separated list of addresses. Partial paths are permitted, which will allow any resources that start with that path to be destroyed.
 
 ```
-# via environment variable
-TFGUARD_ALLOW_ADDRESS_DESTROY=address1,address2
-
-# via flag
 tfguard -allow-address-destroy=address1,address2
 ```
 
@@ -36,9 +32,5 @@ tfguard -allow-address-destroy=address1,address2
 A comma separated list of types.
 
 ```
-# via environment variable
-TFGUARD_ALLOW_TYPE_DESTROY=type1,type2
-
-# via flag
-tfguard -allow-type=type1,type2
+tfguard -allow-type-destroy=type1,type2
 ```
