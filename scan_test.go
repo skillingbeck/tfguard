@@ -7,11 +7,11 @@ import (
 )
 
 var testPlans = []struct {
-	name          string
-	plan          string
-	expected      []string
-	skipAddresses []string
-	skipTypes     []string
+	name           string
+	plan           string
+	expected       []string
+	allowAddresses []string
+	allowTypes     []string
 }{
 	{
 		name:     "no_deletions",
@@ -21,48 +21,48 @@ var testPlans = []struct {
 	{
 		name:     "a_delete",
 		plan:     "004.json",
-		expected: []string{"module.child.aws_instance.foo[0]|Fail"},
+		expected: []string{"module.child.aws_instance.foo[0]|Block"},
 	},
 	{
-		name:          "a_skipped_delete",
-		plan:          "004.json",
-		skipAddresses: []string{"module.child.aws_instance.foo[0]"},
-		expected:      []string{"module.child.aws_instance.foo[0]|Skip"},
+		name:           "allowed_delete",
+		plan:           "004.json",
+		allowAddresses: []string{"module.child.aws_instance.foo[0]"},
+		expected:       []string{"module.child.aws_instance.foo[0]|Allow"},
 	},
 	{
-		name:          "an_unskipped_delete",
-		plan:          "004.json",
-		skipAddresses: []string{"module.child.aws_instance.foo[1]"},
-		expected:      []string{"module.child.aws_instance.foo[0]|Fail"},
+		name:           "not_allowed_delete",
+		plan:           "004.json",
+		allowAddresses: []string{"module.child.aws_instance.foo[1]"},
+		expected:       []string{"module.child.aws_instance.foo[0]|Block"},
 	},
 	{
-		name:     "two_fails",
+		name:     "two_blocks",
 		plan:     "005.json",
-		expected: []string{"module.child.aws_instance.foo[0]|Fail", "module.other.aws_s3_bucket.foobar|Fail"},
+		expected: []string{"module.child.aws_instance.foo[0]|Block", "module.other.aws_s3_bucket.foobar|Block"},
 	},
 	{
-		name:          "one_skip_one_fail",
-		plan:          "005.json",
-		skipAddresses: []string{"module.child.aws_instance.foo[0]"},
-		expected:      []string{"module.child.aws_instance.foo[0]|Skip", "module.other.aws_s3_bucket.foobar|Fail"},
+		name:           "one_allow_one_block",
+		plan:           "005.json",
+		allowAddresses: []string{"module.child.aws_instance.foo[0]"},
+		expected:       []string{"module.child.aws_instance.foo[0]|Allow", "module.other.aws_s3_bucket.foobar|Block"},
 	},
 	{
-		name:          "one_substring_skip_one_fail",
-		plan:          "005.json",
-		skipAddresses: []string{"module.other"},
-		expected:      []string{"module.child.aws_instance.foo[0]|Fail", "module.other.aws_s3_bucket.foobar|Skip"},
+		name:           "one_substring_allow_one_block",
+		plan:           "005.json",
+		allowAddresses: []string{"module.other"},
+		expected:       []string{"module.child.aws_instance.foo[0]|Block", "module.other.aws_s3_bucket.foobar|Allow"},
 	},
 	{
-		name:          "two_fails_not_skipped",
-		plan:          "005.json",
-		skipAddresses: []string{"module.child.aws_instance.foo[1]"},
-		expected:      []string{"module.child.aws_instance.foo[0]|Fail", "module.other.aws_s3_bucket.foobar|Fail"},
+		name:           "two_blocks_not_allowed",
+		plan:           "005.json",
+		allowAddresses: []string{"module.child.aws_instance.foo[1]"},
+		expected:       []string{"module.child.aws_instance.foo[0]|Block", "module.other.aws_s3_bucket.foobar|Block"},
 	},
 	{
-		name:      "one_type_skip_one_fail",
-		plan:      "005.json",
-		skipTypes: []string{"aws_instance"},
-		expected:  []string{"module.child.aws_instance.foo[0]|Skip", "module.other.aws_s3_bucket.foobar|Fail"},
+		name:       "one_type_allowed_one_block",
+		plan:       "005.json",
+		allowTypes: []string{"aws_instance"},
+		expected:   []string{"module.child.aws_instance.foo[0]|Allow", "module.other.aws_s3_bucket.foobar|Block"},
 	},
 }
 
@@ -78,7 +78,7 @@ func TestScan(t *testing.T) {
 			if err != nil {
 				t.Errorf("Unexpected error while reading plan: %v", err)
 			}
-			results := Scan(plan, WithAllowAddressDestroy(tt.skipAddresses), WithAllowTypeDestroy(tt.skipTypes))
+			results := Scan(plan, WithAllowAddressDestroy(tt.allowAddresses), WithAllowTypeDestroy(tt.allowTypes))
 			if results == nil {
 				t.Errorf("Scan results should not be nil")
 			}

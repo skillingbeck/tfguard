@@ -11,11 +11,14 @@ With Terraform Guard in the CICD pipeline, anyone making infrastructure changes 
 3. Verify everything is working as intended and original resource is no longer in use
 4. Explicitly allow original resource to be deleted in `tfguard`; remove original resource from terraform; deploy changes
 
+Supports terraform 0.12 and above.
+
 ## Example
 
 ```
 terraform plan -out=out.tfplan -input=false
-tfguard out.tfplan
+terraform show -json out.tfplan > ../tfplan.json
+tfguard tfplan.json
 terraform apply out.tfplan -auto-approve -input=false
 ```
 

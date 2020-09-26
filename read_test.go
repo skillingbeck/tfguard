@@ -13,15 +13,19 @@ var readTests = []struct {
 }{
 	{
 		testFile:    "001.txt",
-		expectError: "invalid character",
+		expectError: "not valid json",
 	},
 	{
-		testFile:           "002.json",
-		expectChangeNumber: 0,
+		testFile:    "002.json",
+		expectError: "format_version not present",
 	},
 	{
 		testFile:           "003.json",
 		expectChangeNumber: 1,
+	},
+	{
+		testFile:    "006.json",
+		expectError: "plan format does not match schema",
 	},
 }
 
@@ -35,12 +39,12 @@ func TestReadPlan(t *testing.T) {
 
 			plan, err := ReadPlan([]byte(planJSON))
 			if err != nil {
-				if !strings.Contains(err.Error(), testPlan.expectError) {
+				if testPlan.expectError == "" || !strings.Contains(err.Error(), testPlan.expectError) {
 					t.Errorf("Unexpected error: %v", err)
 				}
 			} else {
 				if len(plan.ResourceChanges) != testPlan.expectChangeNumber {
-					t.Errorf("Expected %d changes, got %d", len(plan.ResourceChanges), testPlan.expectChangeNumber)
+					t.Errorf("Expected %d changes, got %d", testPlan.expectChangeNumber, len(plan.ResourceChanges))
 				}
 			}
 		})
