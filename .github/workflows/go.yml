@@ -31,7 +31,18 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v .
+      run: |
+        go build -v .
+        mkdir -p bin
+        cd cmd
+        env GOOS=linux GOARCH=amd64 go build -o ../bin/tfguard_linux_amd64
+        env GOOS=windows GOARCH=amd64 go build -o ../bin/tfguard_windows_amd64.exe
+        cd ..
 
     - name: Test
       run: go test -v .
+    
+    - uses: actions/upload-artifact@v2
+      with:
+        name: binaries
+        path: bin/
