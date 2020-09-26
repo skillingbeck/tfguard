@@ -1,0 +1,60 @@
+{
+    "format_version": "0.1", 
+    "prior_state": {},
+    "resource_changes": [
+        {
+            "address": "module.child.aws_instance.foo[0]",
+            "module_address": "module.child",
+            "mode": "managed",
+            "type": "aws_instance",
+            "name": "foo",
+            "index": 0,
+            "deposed": "deadbeef",
+            "change": {
+                "actions": ["delete"],
+                "before": {},
+                "after": {}
+            }
+        },
+        {
+            "address": "module.child.aws_instance.foo[1]",
+            "module_address": "module.child",
+            "mode": "managed",
+            "type": "aws_instance",
+            "name": "foo",
+            "index": 1,
+            "deposed": "deadbeef",
+            "change": {
+                "actions": ["update"],
+                "before": {},
+                "after": {}
+            }
+        },
+        {
+            "address": "module.other.aws_instance.foobar",
+            "module_address": "module.other",
+            "mode": "managed",
+            "type": "aws_instance",
+            "name": "foobar",
+            "deposed": "deadbeef",
+            "change": {
+                "actions": ["update"],
+                "before": {},
+                "after": {}
+            }
+        },
+        {
+            "address": "module.other.aws_s3_bucket.foobar",
+            "module_address": "module.other",
+            "mode": "managed",
+            "type": "aws_s3_bucket",
+            "name": "foobar",
+            "deposed": "deadbeef",
+            "change": {
+                "actions": ["delete", "create"],
+                "before": {},
+                "after": {}
+            }
+        }
+    ]
+}

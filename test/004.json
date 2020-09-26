@@ -1,0 +1,20 @@
+{
+    "format_version": "0.1", 
+    "prior_state": {},
+    "resource_changes": [
+        {
+            "address": "module.child.aws_instance.foo[0]",
+            "module_address": "module.child",
+            "mode": "managed",
+            "type": "aws_instance",
+            "name": "foo",
+            "index": 0,
+            "deposed": "deadbeef",
+            "change": {
+                "actions": ["delete"],
+                "before": {},
+                "after": {}
+            }
+        }
+    ]
+}
