@@ -15,6 +15,7 @@ func main() {
 
 	help := flag.Bool("help", false, "show usage instructions")
 	allowAddressDestroy := flag.String("allow-address-destroy", "", "comma separated list of addresses which are allowed to be destroyed")
+	allowTypeDestroy := flag.String("allow-type-destroy", "", "comma separated list of types which are allowed to be destroyed")
 	flag.Parse()
 
 	if *help {
@@ -35,15 +36,16 @@ func main() {
 	check(err, "unable to parse the plan")
 
 	allowAddressDestroySlice := stringFlagToStringSlice(*allowAddressDestroy)
+	allowTypeDestroySlice := stringFlagToStringSlice(*allowTypeDestroy)
 
-	results := tfguard.Scan(plan, tfguard.WithAllowAddressDestroy(allowAddressDestroySlice))
+	results := tfguard.Scan(plan, tfguard.WithAllowAddressDestroy(allowAddressDestroySlice), tfguard.WithAllowTypeDestroy(allowTypeDestroySlice))
 	fail := false
 
 	for _, result := range results {
-		if result.Outcome == tfguard.FAIL {
+		if result.Outcome == tfguard.BLOCK {
 			fail = true
 		}
-		fmt.Printf("%s\t%s\n", result.Outcome, result.Address)
+		fmt.Printf("%s\t%s\t%s\n", result.Rule, result.Outcome, result.Address)
 	}
 
 	if fail {
@@ -71,7 +73,7 @@ TFGUARD
 =======
 
 usage:
-	tfguard [file] [options]
+	tfguard [options] [file]
 	
 options:
 `)

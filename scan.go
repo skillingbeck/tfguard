@@ -26,12 +26,10 @@ type ScanResult struct {
 }
 
 const (
-	// FAIL rule has been violated
-	FAIL = "Fail"
-	// SKIP rule has been skipped
-	SKIP = "Skip"
-	// NOTICE is not important, it's mentioned
-	NOTICE = "Notice"
+	// BLOCK rule has been violated
+	BLOCK = "Block"
+	// ALLOW rule has been allowed
+	ALLOW = "Allow"
 )
 
 func Scan(plan *PlanRepresentation, mods ...OptionsMod) []ScanResult {
@@ -52,17 +50,17 @@ func getOptionsWithMods(mods ...OptionsMod) options {
 func appendResultsForDeletes(plan *PlanRepresentation, results []ScanResult, opts options) []ScanResult {
 	for _, change := range plan.ResourceChanges {
 		if stringInSlice("delete", change.Change.Actions) {
-			outcome := FAIL
-			if shouldSkipForDeletes(change, opts) {
-				outcome = SKIP
+			outcome := BLOCK
+			if shouldAllowForDeletes(change, opts) {
+				outcome = ALLOW
 			}
-			results = append(results, ScanResult{change.Address, "PreventDelete", outcome})
+			results = append(results, ScanResult{change.Address, "DeleteGuard", outcome})
 		}
 	}
 	return results
 }
 
-func shouldSkipForDeletes(change ResourceChange, opts options) bool {
+func shouldAllowForDeletes(change ResourceChange, opts options) bool {
 	if stringStartsInSlice(change.Address, opts.AllowAddressDestroy) {
 		return true
 	}

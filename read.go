@@ -1,6 +1,10 @@
 package tfguard
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+)
 
 // PlanRepresentation is an unmarshalled terraform plan
 type PlanRepresentation struct {
@@ -28,8 +32,17 @@ type ChangeRepresentation struct {
 // ReadPlan unmarshalls terraform plan JSON to an object
 func ReadPlan(data []byte) (*PlanRepresentation, error) {
 	var plan PlanRepresentation
-	if err := json.Unmarshal(data, &plan); err != nil {
-		return nil, err
+
+	if !json.Valid(data) {
+		return nil, errors.New("file is not valid json")
 	}
+	if err := json.Unmarshal(data, &plan); err != nil {
+		return nil, fmt.Errorf("plan format does not match schema: %w", err)
+	}
+
+	if len(plan.FormatVersion) == 0 {
+		return nil, errors.New("format_version not present, check this is a terraform plan generated with terraform show")
+	}
+
 	return &plan, nil
 }
