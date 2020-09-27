@@ -1,5 +1,7 @@
 # Terraform Guard
 
+![Go](https://github.com/skillingbeck/tfguard/workflows/Go/badge.svg)
+
 A command line tool to prevent unintented destruction of terraform resources.
 
 Intended to be run between `terraform plan` and `terraform apply` when using CICD pipelines to deploy infrastructure changes. If the plan includes changes that involve a `destroy` action on any resource that isn't explicitly on an allow list, then the exit code will be non-zero.
