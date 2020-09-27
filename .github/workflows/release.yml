@@ -52,7 +52,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./tfguard_linux_amd64.zip
-          asset_name: tfguard_${{ github.ref }}_linux_amd64.zip
+          asset_name: tfguard_linux_amd64.zip
           asset_content_type: application/zip
       - name: Upload Windows Bin
         id: upload-windows-bin
@@ -62,5 +62,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./tfguard_windows_amd64.zip
-          asset_name: tfguard_${{ github.ref }}_windows_amd64.zip
+          asset_name: tfguard_windows_amd64.zip
           asset_content_type: applicastion/zip
