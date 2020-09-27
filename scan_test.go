@@ -64,6 +64,12 @@ var testPlans = []struct {
 		allowTypes: []string{"aws_instance"},
 		expected:   []string{"module.child.aws_instance.foo[0]|Allow", "module.other.aws_s3_bucket.foobar|Block"},
 	},
+	{
+		name:           "one_type_allowed_one_block",
+		plan:           "tf1.json",
+		allowAddresses: []string{"time_rotating.t3"},
+		expected:       []string{"time_rotating.t3|Allow", "time_rotating.t2|Block"},
+	},
 }
 
 func TestScan(t *testing.T) {
